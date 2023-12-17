@@ -1,0 +1,42 @@
+name: Update Data Action
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 6 * * *"
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Update Data
+        id: update-data
+        run: echo "RESULT=$(python main.py ${{ secrets.TOKEN }})" >> $GITHUB_OUTPUT
+
+      - name: Send Notification
+        if: steps.update-data.outputs.RESULT != 'Success!'
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: ${{ secrets.MAIL_SERVER }}
+          server_port: 465
+          username: ${{ secrets.MAIL_USERNAME }}
+          password: ${{ secrets.MAIL_PASSWORD }}
+          subject: An Error Occured
+          from: Notification
+          to: ${{ secrets.MAIL_USERNAME }}
+          body: |
+            An error occured.
+            ${{ steps.update-data.outputs.RESULT }}
