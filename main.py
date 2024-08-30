@@ -1,9 +1,9 @@
 import hashlib
+import sys
 from urllib.parse import urljoin
 
-from bs4 import BeautifulSoup
 import requests
-import sys
+from bs4 import BeautifulSoup
 
 headers={"User-Agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36"}
 
@@ -15,6 +15,7 @@ def insert(dat):
 	res.append([sha256_hash.hexdigest()]+dat)
 
 def get_text(t):
+	if not t: return t
 	while t[0] in [" ","\t","\n","\r"]: t=t[1:]
 	while t[-1] in [" ","\t","\n","\r"]: t=t[:-1]
 	return t
