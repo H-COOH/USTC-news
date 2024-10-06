@@ -68,5 +68,5 @@ get_teach()
 get_ysjt()
 get_math()
 
-re=requests.post(url="https://fun.mzxr.top/info/update.php",json={"token":sys.argv[1],"data":res}).text
+re=requests.post(url="https://fun.mzxr.online/info/update.php",json={"token":sys.argv[1],"data":res}).text
 print(re)
