@@ -24,7 +24,13 @@ def get_home(p):
 	data=soup.find_all("tr",class_="light")
 	for i in data:
 		u=i.contents[3].contents[1]
-		insert([p,urljoin(url,u["href"]),u.text,i.contents[5].text,"请点击链接以查看详细内容"])
+		k=urljoin(url,u["href"])
+		r=requests.get(url=k,headers=headers)
+		try:
+			s=BeautifulSoup(r.content.decode("utf-8"),"lxml").find(class_="v_news_content").text
+		except:
+			s="请点击链接以查看详细内容"
+		insert([p,urljoin(url,u["href"]),u.text,i.contents[5].text,s])
 
 def get_teach():
 	url="https://www.teach.ustc.edu.cn/category/notice"
@@ -33,10 +39,10 @@ def get_teach():
 	for i in data:
 		u=i.contents[3].contents[0]
 		r=requests.get(url=u["href"],headers=headers)
-		if u["href"].find("https://www.teach.ustc.edu.cn/") or r.status_code!=200:
-			s="请点击链接以查看详细内容"
-		else:
+		try:
 			s=BeautifulSoup(r.text,"lxml").find("article").text
+		except:
+			s="请点击链接以查看详细内容"
 		insert(["teach",u["href"],u.text,get_text(i.contents[5].text),get_text(s)])
 
 def get_ysjt():
